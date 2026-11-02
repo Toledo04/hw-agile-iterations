@@ -44,5 +44,8 @@ module Actionmap
     config.hosts << '.codio.io'
     config.hosts << '.herokuapp.com'
     config.hosts << '127.0.0.1'
+
+    render_hostname = ENV.fetch('RENDER_EXTERNAL_HOSTNAME', nil)
+    config.hosts << render_hostname if render_hostname.present?
   end
 end
