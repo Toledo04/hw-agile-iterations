@@ -40,16 +40,19 @@ class Representative < ApplicationRecord
       # Inspect all the data that's there to make part 1 easier.
       # Rails.logger.debug official
       # official.dig('bio', 'party')
-      ocdid = official['govtrack_id']
+      ocdid = official.dig('references', 'govtrack_id')
       reps << Representative.find_rep(official, ocdid: ocdid, title: title)
     end
     reps
   end
 
   def self.find_rep(official, title: '', ocdid: '')
-    rep = Representative.create({ name: official['name'], ocdid: ocdid,
-      title: title, party: official['party'], photo_url: official['photo_url'] })
-    rep.save
+    rep = if ocdid.present?
+            Representative.find_or_initialize_by(ocdid: ocdid)
+          else
+            Representative.find_or_initialize_by(name: official['name'], title: title)
+          end
+    rep.update!(name: official['name'], title: title)
     rep
   end
 
