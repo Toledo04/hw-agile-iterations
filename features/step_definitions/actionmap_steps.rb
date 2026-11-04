@@ -20,6 +20,13 @@ end
 
 # <path class="actionmap-view-region" d="" tabindex="0" data-state-name="California"
 #    data-state-fips-code="06" data-state-symbol="CA"></path>
+def click_map_region(selector)
+  expect(page).to have_css(selector)
+  page.execute_script(
+    "document.querySelector(arguments[0]).dispatchEvent(new MouseEvent('click', { bubbles: true }));",
+    selector
+  )
+end
 
 Then /I click the state "(\w\w)"/i do |state|
   # Find the element, assert it exists.
@@ -32,10 +39,16 @@ end
 
 Then /I click the county "(.*)"/i do |county_name|
   # Same as above, you might find this helpful.
+  click_map_region("path[data-county-name='#{county_name}']")
 end
 
 Then /I click the county with FIPS Code "(.*)"/i do |fips_code|
   # Same as above, you might find this helpful.
+  click_map_region("path[data-county-fips-code='#{fips_code}']")
+end
+
+Then /^the current page should be the county page for "(\w\w)" with FIPS Code "(.*)"$/i do |state, fips_code|
+  expect(page).to have_current_path("/state/#{state}/county/#{fips_code}")
 end
 
 Then /I should see (\d+) (?:states|counties)/i do |count|
