@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe Representative do
-  # Shaped like one entry of Geocodio's congressional_districts.current_legislators
   let(:legislator) do
     {
       'type' => 'representative',
@@ -52,6 +51,28 @@ RSpec.describe Representative do
     it 'keeps different representatives as separate records' do
       expect { described_class.civic_api_to_representative_params(geocodio_response(legislator, other_legislator)) }
         .to change(described_class, :count).by(2)
+    end
+
+    context 'when Geocodio does not return a govtrack id' do
+      let(:legislator) do
+        {
+          'type' => 'representative',
+          'bio' => { 'first_name' => 'Barbara', 'last_name' => 'Lee' },
+          'references' => {}
+        }
+      end
+
+      it 'does not create a duplicate when the same representative is searched again' do
+        described_class.civic_api_to_representative_params(geocodio_response(legislator))
+        expect { described_class.civic_api_to_representative_params(geocodio_response(legislator)) }
+          .not_to change(described_class, :count)
+      end
+
+      it 'matches the existing record by name and title' do
+        first = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
+        again = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
+        expect(again.id).to eq(first.id)
+      end
     end
   end
 end
