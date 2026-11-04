@@ -12,3 +12,9 @@ Scenario: Clicking a county opens the county page instead of search
   When I click the county with FIPS Code "001"
   Then the current page should be the county page for "CA" with FIPS Code "001"
   And I should see "Alameda County"
+
+Scenario: Going back from a county to its state
+  Given I am on the state page for "CA"
+  When I click the county with FIPS Code "001"
+  And I follow "Back to California"
+  Then the current page should be the state page for "CA"

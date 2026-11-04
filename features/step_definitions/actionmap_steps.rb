@@ -51,6 +51,10 @@ Then /^the current page should be the county page for "(\w\w)" with FIPS Code "(
   expect(page).to have_current_path("/state/#{state}/county/#{fips_code}")
 end
 
+Then /^the current page should be the state page for "(\w\w)"$/i do |state|
+  expect(page).to have_current_path(state_map_path(state))
+end
+
 Then /I should see (\d+) (?:states|counties)/i do |count|
   # How many counties should the map render
   # You might use this as a check that the right number of elements are rendered.
