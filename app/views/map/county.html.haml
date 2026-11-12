@@ -12,6 +12,11 @@
           }
             %title  Map of #{@state.name} highlighting #{@county.name}
             /* SVG element will be filled using d3.js and a topojson file. */
+      %h3.text-center Representatives
+      - if @representatives.present?
+        = render 'representatives/table', representatives: @representatives
+      - else
+        %p.text-center No representatives found for this county.
 
 #actionmap-info-box
 
