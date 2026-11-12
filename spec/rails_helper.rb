@@ -4,6 +4,7 @@
 # block only names the run so the results merge into one report.
 require 'simplecov'
 SimpleCov.start 'rails' do
+  add_filter '/lib/'
   command_name 'rspec'
 end
 
