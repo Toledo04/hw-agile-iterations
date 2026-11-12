@@ -6,6 +6,7 @@ require 'fileutils'
 # block only names the run so the results merge into one report.
 require 'simplecov'
 SimpleCov.start 'rails' do
+  add_filter '/lib/'
   # `cucumber` and `cucumber -p a11y` are separate runs; each needs its own
   # name or the second would replace the first in the merged report.
   profile = ENV['CUCUMBER_PROFILE'] || ENV['PROFILE'] ||
