@@ -3,6 +3,8 @@
     %section.my-4
       %h2.text-center
         #{@county.name}, #{@state.symbol}
+      %p.text-center
+        = link_to "Back to #{@state.name}", state_map_path(@state.symbol)
       .overflow-hidden.bg-light.text-center.mb-3
         .overflow-auto.py-3
           %svg.d-inline#actionmap-state-counties-view{
