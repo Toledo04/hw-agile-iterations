@@ -61,6 +61,8 @@ describe MapController do
   end
 
   describe 'GET county' do
+    before { allow(Representative).to receive(:geocodio_search).and_return(nil) }
+
     it 'returns a successful response' do
       get :county,
           params: { use_route: '/state/:state_symbol/county/:std_fips_code', state_symbol: 'CA',
@@ -94,6 +96,35 @@ std_fips_code: '001' }
           params: { use_route: '/state/:state_symbol/county/:std_fips_code', state_symbol: 'XX',
 std_fips_code: '001' }
       expect(response).to redirect_to root_path
+    end
+
+    context 'when loading representatives' do
+      let(:geocodio_response) do
+        legislator = { 'type'       => 'representative',
+                       'bio'        => { 'first_name' => 'Barbara', 'last_name' => 'Lee' },
+                       'references' => { 'govtrack_id' => '400237' } }
+        fields = { 'congressional_districts' => [{ 'current_legislators' => [legislator] }] }
+        { 'results' => [{ 'response' => { 'results' => [{ 'fields' => fields }] } }] }
+      end
+      let(:county_params) { { state_symbol: 'CA', std_fips_code: '001' } }
+
+      it 'searches Geocodio with the county and state' do
+        allow(Representative).to receive(:geocodio_search).and_return(geocodio_response)
+        get :county, params: county_params
+        expect(Representative).to have_received(:geocodio_search).with('Alameda, CA')
+      end
+
+      it 'assigns the representatives for the county' do
+        allow(Representative).to receive(:geocodio_search).and_return(geocodio_response)
+        get :county, params: county_params
+        expect(assigns(:representatives).map(&:name)).to eq(['Barbara Lee'])
+      end
+
+      it 'assigns an empty list when the lookup fails' do
+        allow(Representative).to receive(:geocodio_search).and_raise(StandardError, 'API down')
+        get :county, params: county_params
+        expect(assigns(:representatives)).to eq([])
+      end
     end
   end
 end

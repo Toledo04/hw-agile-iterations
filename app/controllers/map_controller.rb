@@ -24,9 +24,18 @@ class MapController < ApplicationController
     handle_county_not_found && return if @county.nil?
 
     @county_details = @state.counties.index_by(&:std_fips_code)
+    @representatives = county_representatives
   end
 
   private
+
+  def county_representatives
+    data = Representative.geocodio_search("#{@county.name}, #{@state.symbol}")
+    Representative.civic_api_to_representative_params(data)
+  rescue StandardError => e
+    Rails.logger.warn("Could not load representatives for #{@county.name}: #{e.message}")
+    []
+  end
 
   def handle_state_not_found
     state_symbol = params[:state_symbol].upcase
