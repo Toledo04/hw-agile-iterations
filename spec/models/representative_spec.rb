@@ -1,12 +1,38 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: representatives
+#
+#  id           :integer          not null, primary key
+#  address      :string
+#  name         :string
+#  ocdid        :string
+#  party        :string
+#  phone_number :string
+#  photo_url    :string
+#  title        :string
+#  website_url  :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
 require 'rails_helper'
 
 RSpec.describe Representative do
   let(:legislator) do
     {
       'type' => 'representative',
-      'bio' => { 'first_name' => 'Barbara', 'last_name' => 'Lee', 'party' => 'Democrat' },
+      'bio' => {
+        'first_name' => 'Barbara',
+        'last_name' => 'Lee',
+        'party' => 'Democrat',
+        'photo_url' => 'https://example.test/barbara-lee.jpg'
+      },
+      'contact' => {
+        'address' => '123 Capitol Ave, Washington, DC 20510',
+        'url' => 'https://lee.house.gov',
+        'phone' => '202-555-0100'
+      },
       'references' => { 'govtrack_id' => '400237', 'bioguide_id' => 'L000551' }
     }
   end
@@ -26,6 +52,50 @@ RSpec.describe Representative do
   end
 
   describe '.civic_api_to_representative_params' do
+    let(:expected_profile_details) do
+      {
+        address: '123 Capitol Ave, Washington, DC 20510',
+        photo_url: 'https://example.test/barbara-lee.jpg',
+        website_url: 'https://lee.house.gov',
+        phone_number: '202-555-0100',
+        party: 'Democrat'
+      }
+    end
+
+    it 'saves profile details returned by Geocodio' do
+      rep = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
+      expect(rep.reload).to have_attributes(expected_profile_details)
+    end
+
+    context 'when Geocodio omits some optional profile details' do
+      let(:expected_profile_details) do
+        {
+          address: '123 Capitol Ave, Washington, DC 20510',
+          photo_url: nil,
+          website_url: 'https://lee.house.gov',
+          phone_number: nil,
+          party: 'Democrat'
+        }
+      end
+
+      let(:legislator) do
+        {
+          'type' => 'representative',
+          'bio' => { 'first_name' => 'Barbara', 'last_name' => 'Lee', 'party' => 'Democrat' },
+          'contact' => {
+            'address' => '123 Capitol Ave, Washington, DC 20510',
+            'url' => 'https://lee.house.gov'
+          },
+          'references' => { 'govtrack_id' => '400237', 'bioguide_id' => 'L000551' }
+        }
+      end
+
+      it 'saves available fields and leaves missing ones nil' do
+        rep = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
+        expect(rep.reload).to have_attributes(expected_profile_details)
+      end
+    end
+
     it 'creates a representative the first time they are seen' do
       expect { described_class.civic_api_to_representative_params(geocodio_response(legislator)) }
         .to change(described_class, :count).by(1)

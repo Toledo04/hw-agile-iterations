@@ -4,12 +4,17 @@
 #
 # Table name: representatives
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  ocdid      :string
-#  title      :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :integer          not null, primary key
+#  address      :string
+#  name         :string
+#  ocdid        :string
+#  party        :string
+#  phone_number :string
+#  photo_url    :string
+#  title        :string
+#  website_url  :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 class Representative < ApplicationRecord
   has_many :news_items, dependent: :delete_all
@@ -52,17 +57,21 @@ class Representative < ApplicationRecord
           else
             Representative.find_or_initialize_by(name: official['name'], title: title)
           end
-    rep.update!(name: official['name'], title: title)
+    rep.update_from_geocodio(official, title: title, ocdid: ocdid)
     rep
   end
 
-  def update_from_geocodio(official)
-    self.title = official['type']
-    self.ocdid = official['govtrack_id']
-    self.party = official['party']
-    self.photo_url = official['photo_url']
-    # TODO: store the address, phone and website
-    save!
+  def update_from_geocodio(official, title: official['type'], ocdid: official.dig('references', 'govtrack_id'))
+    update!(
+      name: official['name'],
+      title: title,
+      ocdid: ocdid,
+      address: official.dig('contact', 'address'),
+      photo_url: official.dig('bio', 'photo_url'),
+      website_url: official.dig('contact', 'url'),
+      phone_number: official.dig('contact', 'phone'),
+      party: official.dig('bio', 'party')
+    )
     self
   end
 end

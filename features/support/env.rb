@@ -113,7 +113,10 @@ After do |scenario|
 
   # Save files
   page.save_page(Rails.root.join(path, "#{scenario_name}_#{timestamp}.html"))
-  page.save_screenshot(Rails.root.join(path, "#{scenario_name}_#{timestamp}.png"))
+  # RackTest has no browser to capture, so it cannot produce screenshots.
+  unless Capybara.current_driver == :rack_test
+    page.save_screenshot(Rails.root.join(path, "#{scenario_name}_#{timestamp}.png"))
+  end
 end
 # rubocop:enable Lint/Debugger
 

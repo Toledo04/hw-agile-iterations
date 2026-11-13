@@ -1,4 +1,23 @@
 .container-fluid.bg-light
-  .row.text-center
-    .col-12
-      %h1.text-center= @representative&.name
+  .row.justify-content-center.py-4
+    .col-12.col-md-8
+      %h1= @representative.name
+
+      - if @representative.photo_url.present?
+        %img.img-fluid.rounded.mb-3{ src: @representative.photo_url, alt: "Photo of #{@representative.name}" }
+
+      %dl
+        - if @representative.party.present?
+          %dt Party
+          %dd= @representative.party
+        - if @representative.address.present?
+          %dt Address
+          %dd= @representative.address
+        - if @representative.phone_number.present?
+          %dt Phone
+          %dd
+            %a{ href: "tel:#{@representative.phone_number}" }= @representative.phone_number
+        - if @representative.website_url.present?
+          %dt Website
+          %dd
+            %a{ href: @representative.website_url } Official website
