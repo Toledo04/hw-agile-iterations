@@ -45,3 +45,16 @@ Scenario: The Representatives Page
 ## CS169: Add the fourth page here.
 # @a11y
 # Scenario: ...
+
+@a11y
+Scenario: A State Map Page
+    Given I am on the state page for "CA"
+    Then I should see "California"
+    And the page should be axe clean
+
+@a11y
+Scenario: A County Page
+    Given I am on the state page for "CA"
+    When I click the county with FIPS Code "001"
+    Then I should see "Alameda County"
+    And the page should be axe clean
