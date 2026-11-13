@@ -52,19 +52,32 @@ RSpec.describe Representative do
   end
 
   describe '.civic_api_to_representative_params' do
-    it 'saves profile details returned by Geocodio' do
-      rep = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
-
-      expect(rep.reload).to have_attributes(
+    let(:expected_profile_details) do
+      {
         address: '123 Capitol Ave, Washington, DC 20510',
         photo_url: 'https://example.test/barbara-lee.jpg',
         website_url: 'https://lee.house.gov',
         phone_number: '202-555-0100',
         party: 'Democrat'
-      )
+      }
+    end
+
+    it 'saves profile details returned by Geocodio' do
+      rep = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
+      expect(rep.reload).to have_attributes(expected_profile_details)
     end
 
     context 'when Geocodio omits some optional profile details' do
+      let(:expected_profile_details) do
+        {
+          address: '123 Capitol Ave, Washington, DC 20510',
+          photo_url: nil,
+          website_url: 'https://lee.house.gov',
+          phone_number: nil,
+          party: 'Democrat'
+        }
+      end
+
       let(:legislator) do
         {
           'type' => 'representative',
@@ -79,14 +92,7 @@ RSpec.describe Representative do
 
       it 'saves available fields and leaves missing ones nil' do
         rep = described_class.civic_api_to_representative_params(geocodio_response(legislator)).first
-
-        expect(rep.reload).to have_attributes(
-          address: '123 Capitol Ave, Washington, DC 20510',
-          photo_url: nil,
-          website_url: 'https://lee.house.gov',
-          phone_number: nil,
-          party: 'Democrat'
-        )
+        expect(rep.reload).to have_attributes(expected_profile_details)
       end
     end
 
