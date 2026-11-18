@@ -2,6 +2,7 @@
 
 class BillsController < ApplicationController
   BILL_TYPES = %w[hr s hjres sjres hconres sconres hres sres].freeze
+  CURRENT_CONGRESS = 119
 
   def index
     @bill_types = BILL_TYPES
@@ -24,7 +25,7 @@ class BillsController < ApplicationController
   end
 
   def search_path
-    return 'bill' if @congress.nil?
+    return "bill/#{CURRENT_CONGRESS}" if @congress.nil?
     return "bill/#{@congress}" if @bill_type.nil?
 
     "bill/#{@congress}/#{@bill_type}"
