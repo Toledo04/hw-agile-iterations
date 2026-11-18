@@ -25,9 +25,9 @@ describe BillsController do
       expect(response).to render_template('index')
     end
 
-    it 'loads the 50 most recent bills when no search is given' do
+    it 'loads 50 bills from the current congress when no search is given' do
       get :index
-      expect(client).to have_received(:get).with('bill', { limit: 50 })
+      expect(client).to have_received(:get).with('bill/119', { limit: 50 })
     end
 
     it 'searches by congress' do

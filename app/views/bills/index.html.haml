@@ -5,7 +5,7 @@
   = form_with url: bills_path, method: :get, local: true, class: 'row g-3 justify-content-center mb-4' do |f|
     .col-auto
       = f.label :congress, 'Congress', class: 'form-label'
-      = f.number_field :congress, value: @congress, min: 1, placeholder: '119', class: 'form-control'
+      = f.number_field :congress, value: @congress, min: 1, placeholder: 'e.g. 119', class: 'form-control'
     .col-auto
       = f.label :bill_type, 'Bill type', class: 'form-label'
       = f.select :bill_type,
@@ -37,7 +37,7 @@
         %tbody
           - @bills.each do |bill|
             %tr
-              %th{ scope: 'row' }= bill_number_label(bill)
+              %th.text-nowrap{ scope: 'row' }= bill_number_label(bill)
               %td= bill['title']
               %td= bill['congress']
               %td= bill_type_name(bill)
