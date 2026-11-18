@@ -19,6 +19,31 @@
     .alert.alert-danger{ role: 'alert' }= @error
 
   - if @bills.any?
-    %ul#bills-results
-      - @bills.each do |bill|
-        %li #{bill['type']} #{bill['number']}: #{bill['title']}
+    %p.text-center#bills-count
+      Showing #{@bills.size} of #{number_with_delimiter(@total_count)} bills
+    .table-responsive
+      %table.table.table-striped.table-hover#bills-results
+        %caption.visually-hidden Bills from congress.gov
+        %thead
+          %tr
+            %th{ scope: 'col' } #
+            %th{ scope: 'col' } Title
+            %th{ scope: 'col' } Congress
+            %th{ scope: 'col' } Type
+            %th{ scope: 'col' } Chamber
+            %th{ scope: 'col' } Last Action
+            %th{ scope: 'col' }
+              %span.visually-hidden Save
+        %tbody
+          - @bills.each do |bill|
+            %tr
+              %th{ scope: 'row' }= bill_number_label(bill)
+              %td= bill['title']
+              %td= bill['congress']
+              %td= bill_type_name(bill)
+              %td= bill['originChamber']
+              %td= bill_last_action(bill)
+              %td
+                = button_to 'Save', bills_path, method: :post,
+                  params: { congress: bill['congress'], bill_type: bill['type'].to_s.downcase, number: bill['number'] },
+                  class: 'btn btn-sm btn-outline-primary'

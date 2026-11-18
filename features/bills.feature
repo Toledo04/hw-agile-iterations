@@ -26,3 +26,10 @@ Scenario: Choosing a bill type without a congress number
   And I select "HR" from "Bill type"
   And I press "Search"
   Then I should see "Enter a congress number to search by bill type."
+
+Scenario: Search results are shown in a table
+  When I visit the bills page
+  Then I should see "Showing 1 of 1 bills"
+  And I should see "HR 1"
+  And I should see "House Bill"
+  And I should see "Referred to the House Committee on Energy and Commerce on Jan 3, 2025"
