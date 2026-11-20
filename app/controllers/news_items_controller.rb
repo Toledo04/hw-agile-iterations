@@ -6,7 +6,6 @@ class NewsItemsController < ApplicationController
 
   def index
     @news_items = @representative.news_items
-    @curr_user_id = current_user.id
   end
 
   def show; end
