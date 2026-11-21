@@ -1,0 +1,15 @@
+.container.py-4
+  %h1= @bill.title
+  %dl.row
+    %dt.col-sm-3 Congress
+    %dd.col-sm-9= @bill.congress
+    %dt.col-sm-3 Bill number
+    %dd.col-sm-9= @bill.number
+    %dt.col-sm-3 Original chamber
+    %dd.col-sm-9= @bill.original_chamber
+    %dt.col-sm-3 Bill type
+    %dd.col-sm-9= @bill.bill_type.upcase
+  %h2 Summary
+  .bill-summary= sanitize(@bill.summary)
+  = link_to 'Back to bills', bills_path
+  = link_to 'Saved bills', saved_bills_path, class: 'ms-3'
