@@ -58,3 +58,12 @@ Scenario: A County Page
     When I click the county with FIPS Code "001"
     Then I should see "Alameda County"
     And the page should be axe clean
+
+
+@a11y
+Scenario: The New News Article Form
+    Given I can add news articles without logging in
+    And the representative "Barbara Lee" exists
+    When I open the new news article form for "Barbara Lee"
+    Then I should see "Title"
+    And the page should be axe clean
