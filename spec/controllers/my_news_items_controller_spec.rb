@@ -68,4 +68,38 @@ describe MyNewsItemsController do
       end
     end
   end
+
+  describe 'POST #create' do
+    let(:rep) { Representative.create!(name: 'Barbara Lee') }
+    let(:news_params) do
+      { title: 'New Bill', link: 'https://example.com/bill', description: 'A bill',
+        issue: NewsItem::ISSUES.first, representative_id: rep.id }
+    end
+
+    before do
+      session[:user_id] = User.create!(uid: 'create1', provider: :github, first_name: 'Ada', last_name: 'L').id
+    end
+
+    it 'creates a news item with a valid issue' do
+      expect do
+        post :create, params: { representative_id: rep.id, news_item: news_params }
+      end.to change(NewsItem, :count).by(1)
+    end
+
+    it 'redirects to the new news item' do
+      post :create, params: { representative_id: rep.id, news_item: news_params }
+      expect(response).to redirect_to(representative_news_item_path(rep, NewsItem.last))
+    end
+
+    it 'does not create a news item with an invalid issue' do
+      expect do
+        post :create, params: { representative_id: rep.id, news_item: news_params.merge(issue: 'Not an issue') }
+      end.not_to change(NewsItem, :count)
+    end
+
+    it 'renders the form again with an invalid issue' do
+      post :create, params: { representative_id: rep.id, news_item: news_params.merge(issue: 'Not an issue') }
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end
