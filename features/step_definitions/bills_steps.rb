@@ -13,6 +13,19 @@ Given(/^congress.gov returns a bill titled "([^"]*)"$/) do |title|
   client = instance_double(Congress::Client)
   allow(Congress::Client).to receive(:new).and_return(client)
   allow(client).to receive(:get).and_return({ 'bills' => [bill], 'pagination' => { 'count' => 1 } })
+  @congress_client = client
+end
+
+Given(/^congress.gov provides details and a summary for the bill$/) do
+  allow(@congress_client).to receive(:bill_detail).and_return(
+    'bill' => {
+      'congress' => 119, 'number' => 1, 'title' => 'Clean Water Act',
+      'type' => 'HR', 'originChamber' => 'House'
+    }
+  )
+  allow(@congress_client).to receive(:bill_summaries).and_return(
+    'summaries' => [{ 'text' => '<p>A test bill summary.</p>' }]
+  )
 end
 
 Then(/^the navbar should have a link to the bills page$/) do
@@ -21,4 +34,8 @@ end
 
 When(/^I visit the bills page$/) do
   visit bills_path
+end
+
+Then(/^the browser should show the saved bill record$/) do
+  expect(page).to have_current_path(%r{\A/bills/\d+\z})
 end

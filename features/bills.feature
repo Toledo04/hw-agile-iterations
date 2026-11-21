@@ -33,3 +33,18 @@ Scenario: Search results are shown in a table
   And I should see "HR 1"
   And I should see "House Bill"
   And I should see "Referred to the House Committee on Energy and Commerce on Jan 3, 2025"
+
+Scenario: Saving a bill shows its saved details
+  Given congress.gov provides details and a summary for the bill
+  When I visit the bills page
+  And I press "Save"
+  Then the browser should show the saved bill record
+  And I should see "Clean Water Act"
+  And I should see "A test bill summary."
+
+Scenario: Saved bills can be found later
+  Given congress.gov provides details and a summary for the bill
+  When I visit the bills page
+  And I press "Save"
+  And I follow "Saved bills"
+  Then I should see "Clean Water Act"

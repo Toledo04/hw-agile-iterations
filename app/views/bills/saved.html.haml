@@ -1,0 +1,12 @@
+.container.py-4
+  %h1 Saved bills
+  = link_to 'Search bills', bills_path, class: 'btn btn-outline-primary mb-3'
+
+  - if @bills.any?
+    %ul.list-group
+      - @bills.each do |bill|
+        %li.list-group-item.d-flex.align-items-center.gap-3
+          = link_to "#{bill.bill_type.upcase}#{bill.number}", bill_path(bill), class: 'btn btn-outline-primary'
+          %span= bill.title
+  - else
+    %p No bills have been saved yet.

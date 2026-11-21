@@ -2,7 +2,8 @@
   %h1.text-center Bills
   %p.text-center Search congress.gov for bills by congress and bill type.
 
-  = form_with url: bills_path, method: :get, local: true, class: 'row g-3 justify-content-center mb-4' do |f|
+  - bills_form_class = 'row flex-nowrap g-3 justify-content-center mb-4'
+  = form_with url: bills_path, method: :get, local: true, class: bills_form_class do |f|
     .col-auto
       = f.label :congress, 'Congress', class: 'form-label'
       = f.number_field :congress, value: @congress, min: 1, placeholder: 'e.g. 119', class: 'form-control'
@@ -14,6 +15,7 @@
                  class: 'form-select'
     .col-auto.align-self-end
       = f.submit 'Search', name: nil, class: 'btn btn-primary'
+      = link_to 'Saved bills', saved_bills_path, class: 'btn btn-outline-primary ms-2'
 
   - if @error
     .alert.alert-danger{ role: 'alert' }= @error

@@ -14,6 +14,10 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #
+# Indexes
+#
+#  index_bills_on_congress_and_bill_type_and_number  (congress,bill_type,number) UNIQUE
+#
 require 'rails_helper'
 
 describe Bill do
@@ -32,6 +36,14 @@ describe Bill do
     bill = described_class.create!(attributes)
 
     expect(bill.reload).to have_attributes(attributes)
+  end
+
+  it 'does not allow the same bill to be saved twice' do
+    described_class.create!(attributes)
+    duplicate = described_class.new(attributes)
+
+    expect(duplicate).not_to be_valid
+    expect(duplicate.errors[:number]).to be_present
   end
 
   %i[title congress number original_chamber bill_type summary].each do |attribute|
