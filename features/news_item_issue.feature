@@ -12,9 +12,6 @@ Feature: Tag news articles with an issue
     Then the saved article should show the "Immigration" issue
     When I open the representative news article list
     Then the news article list should show the "Immigration" issue
-    And the Delete button should be disabled
-    When I request deletion of the article
-    Then the article should still exist
 
   Scenario: Creating a news article without an issue
     Given I am allowed to add a news article

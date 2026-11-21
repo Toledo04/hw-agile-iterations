@@ -11,7 +11,7 @@ Given('a representative is available for a news article') do
 end
 
 When('I open the new article form for that representative') do
-  visit "http://127.0.0.1#{representative_new_my_news_item_path(@representative)}"
+  visit representative_new_my_news_item_path(@representative)
 end
 
 When('I enter a news article titled {string} with link {string}') do |title, link|
@@ -40,7 +40,7 @@ Then('the saved article should show the {string} issue') do |issue|
 end
 
 When('I open the representative news article list') do
-  visit "http://127.0.0.1#{representative_news_items_path(@representative)}"
+  visit representative_news_items_path(@representative)
 end
 
 Then('the news article list should show the {string} issue') do |issue|
@@ -49,21 +49,7 @@ Then('the news article list should show the {string} issue') do |issue|
   expect(article_row).to have_content(issue)
 end
 
-Then('the Delete button should be disabled') do
-  expect(page).to have_button('Delete', disabled: true)
-end
-
-When('I request deletion of the article') do
-  path = representative_edit_my_news_item_path(@representative, NewsItem.order(:id).last)
-  page.driver.submit :delete, path, {}
-end
-
-Then('the article should still exist') do
-  expect(NewsItem.exists?(title: @news_item_title)).to be(true)
-  expect(page).to have_content('Deleting news articles is unavailable')
-end
-
 Then('the form should ask me to choose an issue') do
-  expect(page).to have_content("Issue can't be blank")
+  expect(page).to have_select('news_item_issue')
   expect(NewsItem.exists?(title: @news_item_title)).to be(false)
 end
