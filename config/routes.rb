@@ -39,5 +39,6 @@ Rails.application.routes.draw do
     delete '/representatives/:representative_id/my_news_item/:id', to: 'my_news_items#destroy'
   end
   get '/search/(:address)' => 'search#search', :as => 'search_representatives'
-  resources :bills, only: %i[index]
+  get '/bills/saved', to: 'bills#saved', as: :saved_bills
+  resources :bills, only: %i[index create show]
 end

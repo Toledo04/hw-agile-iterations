@@ -14,6 +14,11 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #
+# Indexes
+#
+#  index_bills_on_congress_and_bill_type_and_number  (congress,bill_type,number) UNIQUE
+#
 class Bill < ApplicationRecord
   validates :title, :congress, :number, :original_chamber, :bill_type, :summary, presence: true
+  validates :number, uniqueness: { scope: %i[congress bill_type] }
 end

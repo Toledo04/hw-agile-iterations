@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_21_031449) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_21_040000) do
   create_table "bills", force: :cascade do |t|
     t.string "title"
     t.integer "congress"
@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_031449) do
     t.text "summary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["congress", "bill_type", "number"], name: "index_bills_on_congress_and_bill_type_and_number", unique: true
   end
 
   create_table "counties", force: :cascade do |t|
