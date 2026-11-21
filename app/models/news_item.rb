@@ -29,7 +29,8 @@ class NewsItem < ApplicationRecord
 
   # TODO: this belongs to a user (creator_id)
   belongs_to :representative
-  validates :issue, inclusion: { in: ISSUES }
+  validates :issue, inclusion: { in: ISSUES }, allow_nil: true
+  validates :issue, presence: true, if: :issue_required?
 
   def self.issues
     ISSUES
@@ -39,5 +40,11 @@ class NewsItem < ApplicationRecord
     NewsItem.find_by(
       representative_id: representative_id
     )
+  end
+
+  private
+
+  def issue_required?
+    new_record? || will_save_change_to_issue?
   end
 end

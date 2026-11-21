@@ -50,7 +50,5 @@
                     %i.fas.fa-pen &nbsp;Edit
 
                 %td
-                  = link_to(representative_edit_my_news_item_path(item.representative.id, item.id),
-                            data:     { turbo_method: :delete, turbo_confirm: 'Are you sure?' },
-                            class:    'btn btn-danger') do
+                  = button_tag type: 'button', class: 'btn btn-danger', disabled: true do
                     %i.fas.fa-trash &nbsp;Delete

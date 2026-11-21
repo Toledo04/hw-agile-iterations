@@ -49,7 +49,21 @@ Then('the news article list should show the {string} issue') do |issue|
   expect(article_row).to have_content(issue)
 end
 
+Then('the Delete button should be disabled') do
+  expect(page).to have_button('Delete', disabled: true)
+end
+
+When('I request deletion of the article') do
+  path = representative_edit_my_news_item_path(@representative, NewsItem.order(:id).last)
+  page.driver.submit :delete, path, {}
+end
+
+Then('the article should still exist') do
+  expect(NewsItem.exists?(title: @news_item_title)).to be(true)
+  expect(page).to have_content('Deleting news articles is unavailable')
+end
+
 Then('the form should ask me to choose an issue') do
-  expect(page).to have_content('Issue is not included in the list')
+  expect(page).to have_content("Issue can't be blank")
   expect(NewsItem.exists?(title: @news_item_title)).to be(false)
 end

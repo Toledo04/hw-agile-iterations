@@ -5,7 +5,7 @@ class MyNewsItemsController < ApplicationController
 
   before_action :set_representative
   before_action :set_representatives_list
-  before_action :set_news_item, only: %i[edit update destroy]
+  before_action :set_news_item, only: %i[edit update]
 
   def new
     @news_item = NewsItem.new
@@ -46,9 +46,8 @@ class MyNewsItemsController < ApplicationController
   end
 
   def destroy
-    @news_item.destroy
     redirect_to representative_news_items_path(@representative),
-                notice: 'News was successfully destroyed.'
+                alert: 'Deleting news articles is unavailable until article ownership is supported.'
   end
 
   private

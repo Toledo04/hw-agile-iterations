@@ -35,6 +35,15 @@ describe NewsItem do
   end
 
   describe 'issue' do
+    let(:iteration_2_issues) do
+      [
+        'Free Speech', 'Immigration', 'Terrorism', 'Social Security and Medicare', 'Abortion',
+        'Student Loans', 'Gun Control', 'Unemployment', 'Climate Change', 'Homelessness',
+        'Racism', 'Tax Reform', 'Net Neutrality', 'Religious Freedom', 'Border Security',
+        'Minimum Wage', 'Equal Pay'
+      ]
+    end
+
     let(:valid_attributes) do
       { title: 'Article about immigration', link: 'https://example.com/article', representative: representative }
     end
@@ -59,13 +68,15 @@ describe NewsItem do
       expect(item.errors[:issue]).to be_present
     end
 
+    it 'allows existing articles without an issue to be edited' do
+      item = described_class.new(valid_attributes)
+      item.save!(validate: false)
+
+      expect(item.update(title: 'Updated title')).to be(true)
+    end
+
     it 'provides the Iteration 2 issue list for the create form' do
-      expect(described_class.issues).to eq([
-        'Free Speech', 'Immigration', 'Terrorism', 'Social Security and Medicare', 'Abortion',
-        'Student Loans', 'Gun Control', 'Unemployment', 'Climate Change', 'Homelessness',
-        'Racism', 'Tax Reform', 'Net Neutrality', 'Religious Freedom', 'Border Security',
-        'Minimum Wage', 'Equal Pay'
-      ])
+      expect(described_class.issues).to eq(iteration_2_issues)
     end
   end
 end
